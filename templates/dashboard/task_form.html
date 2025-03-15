@@ -1,0 +1,158 @@
+{% extends 'base/base.html' %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    {% if task %}
+        {% trans "Görev Düzenle" %}
+    {% else %}
+        {% trans "Yeni Görev" %}
+    {% endif %} | Spor Salonu Yönetim Sistemi
+{% endblock %}
+
+{% block breadcrumb %}
+<nav aria-label="breadcrumb" class="mt-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard:home' %}">{% trans "Dashboard" %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'dashboard:task_list' %}">{% trans "Görevler" %}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">
+            {% if task %}
+                {% trans "Görev Düzenle" %}
+            {% else %}
+                {% trans "Yeni Görev" %}
+            {% endif %}
+        </li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-3">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">
+            {% if task %}
+                {% trans "Görev Düzenle" %}
+            {% else %}
+                {% trans "Yeni Görev" %}
+            {% endif %}
+        </h1>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                {{ form.title|as_crispy_field }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                {{ form.description|as_crispy_field }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.assigned_to|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.priority|as_crispy_field }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.status|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.due_date|as_crispy_field }}
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a href="{% url 'dashboard:task_list' %}" class="btn btn-outline-secondary me-md-2">
+                                <i class="fas fa-times me-1"></i> {% trans "İptal" %}
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i> {% trans "Kaydet" %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">{% trans "Bilgiler" %}</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        {% if task %}
+                            <strong>{% trans "Oluşturulma Tarihi:" %}</strong> {{ task.created_at|date:"d.m.Y H:i" }}<br>
+                            <strong>{% trans "Son Güncelleme:" %}</strong> {{ task.updated_at|date:"d.m.Y H:i" }}<br>
+                            <strong>{% trans "Oluşturan:" %}</strong> {{ task.assigned_by.get_full_name }}<br>
+                            {% if task.completed_date %}
+                                <strong>{% trans "Tamamlanma Tarihi:" %}</strong> {{ task.completed_date|date:"d.m.Y H:i" }}
+                            {% endif %}
+                        {% else %}
+                            <i class="fas fa-info-circle me-2"></i> {% trans "Yeni bir görev oluşturuyorsunuz. Görev oluşturulduktan sonra, atanan kişiye bildirim gönderilecektir." %}
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">{% trans "Yardım" %}</h5>
+                </div>
+                <div class="card-body">
+                    <h6>{% trans "Öncelik Seviyeleri:" %}</h6>
+                    <ul class="list-unstyled">
+                        <li><span class="badge bg-danger me-1">{% trans "Acil" %}</span> {% trans "Hemen ilgilenilmesi gereken görevler" %}</li>
+                        <li><span class="badge bg-warning me-1">{% trans "Yüksek" %}</span> {% trans "Önemli ve kısa sürede tamamlanması gereken görevler" %}</li>
+                        <li><span class="badge bg-info me-1">{% trans "Orta" %}</span> {% trans "Normal öncelikli görevler" %}</li>
+                        <li><span class="badge bg-secondary me-1">{% trans "Düşük" %}</span> {% trans "Acil olmayan, zaman esnekliği olan görevler" %}</li>
+                    </ul>
+                    
+                    <h6 class="mt-3">{% trans "Durum Seviyeleri:" %}</h6>
+                    <ul class="list-unstyled">
+                        <li><span class="badge bg-secondary me-1">{% trans "Beklemede" %}</span> {% trans "Henüz başlanmamış görevler" %}</li>
+                        <li><span class="badge bg-primary me-1">{% trans "Devam Ediyor" %}</span> {% trans "Üzerinde çalışılan görevler" %}</li>
+                        <li><span class="badge bg-success me-1">{% trans "Tamamlandı" %}</span> {% trans "Bitirilen görevler" %}</li>
+                        <li><span class="badge bg-danger me-1">{% trans "İptal Edildi" %}</span> {% trans "İptal edilen görevler" %}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Tarih seçici için varsayılan değer
+        var dueDateInput = document.getElementById('id_due_date');
+        if (dueDateInput && !dueDateInput.value) {
+            var now = new Date();
+            now.setDate(now.getDate() + 7); // Varsayılan olarak 1 hafta sonra
+            
+            var year = now.getFullYear();
+            var month = String(now.getMonth() + 1).padStart(2, '0');
+            var day = String(now.getDate()).padStart(2, '0');
+            var hours = String(now.getHours()).padStart(2, '0');
+            var minutes = String(now.getMinutes()).padStart(2, '0');
+            
+            dueDateInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+        }
+    });
+</script>
+{% endblock %} 

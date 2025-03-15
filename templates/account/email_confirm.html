@@ -1,0 +1,103 @@
+{% extends "base/base.html" %}
+{% load i18n %}
+{% load static %}
+{% load account %}
+
+{% block title %}{% trans "E-posta Onaylama" %} | Spor Salonu Yönetim Sistemi{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-lg border-0 rounded-lg auth-card">
+        <div class="card-header bg-success text-white text-center py-4">
+          <h3 class="mb-0 font-weight-bold">{% trans "E-posta Onaylama" %}</h3>
+        </div>
+        <div class="card-body p-4 text-center">
+          {% if confirmation %}
+            <div class="mb-4">
+              <i class="fas fa-envelope-open-text fa-5x text-success mb-3"></i>
+              
+              {% user_display confirmation.email_address.user as user_display %}
+              
+              <h4>{% trans "E-posta Adresinizi Onaylayın" %}</h4>
+              <p class="lead">
+                {% blocktrans with confirmation.email_address.email as email %}Lütfen <strong>{{ email }}</strong> adresine ait e-posta adresini onaylayın.{% endblocktrans %}
+              </p>
+            </div>
+            
+            <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
+              {% csrf_token %}
+              <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-success btn-lg px-5 py-3">
+                  <i class="fas fa-check-circle me-2"></i>{% trans "Onayla" %}
+                </button>
+              </div>
+            </form>
+            
+          {% else %}
+            <div class="mb-4">
+              <i class="fas fa-exclamation-triangle fa-5x text-warning mb-3"></i>
+              
+              <h4>{% trans "Geçersiz Onay Bağlantısı" %}</h4>
+              <p class="lead text-danger">
+                {% trans "Bu onay bağlantısı geçersiz veya süresi dolmuş." %}
+              </p>
+            </div>
+            
+            <div class="alert alert-warning">
+              <i class="fas fa-info-circle me-2"></i>
+              {% trans "Onay bağlantısı zaten kullanılmış olabilir veya süresi dolmuş olabilir." %}
+            </div>
+            
+            <div class="d-grid gap-2 mt-4">
+              <a href="{% url 'account_email' %}" class="btn btn-primary btn-lg px-5 py-3">
+                <i class="fas fa-envelope me-2"></i>{% trans "Yeni Onay E-postası Gönder" %}
+              </a>
+            </div>
+          {% endif %}
+        </div>
+        <div class="card-footer text-center py-3">
+          <p class="mb-0">
+            {% trans "Sorun mu yaşıyorsunuz? " %}
+            <a href="#" class="text-decoration-none">{% trans "Destek ekibimizle iletişime geçin" %}</a>.
+          </p>
+        </div>
+      </div>
+      
+      <div class="text-center mt-4">
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+          <i class="fas fa-home me-2"></i>{% trans "Ana Sayfaya Dön" %}
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Animasyon için CSS -->
+<style>
+  .auth-card {
+    transition: all 0.3s ease;
+    animation: fadeIn 0.5s ease-out;
+  }
+  
+  .auth-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .btn {
+    transition: all 0.3s ease;
+  }
+  
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+</style>
+{% endblock %} 

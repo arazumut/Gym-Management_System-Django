@@ -1,0 +1,165 @@
+{% extends 'base/base.html' %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    {% if announcement %}
+        {% trans "Duyuru Düzenle" %}
+    {% else %}
+        {% trans "Yeni Duyuru" %}
+    {% endif %} | Spor Salonu Yönetim Sistemi
+{% endblock %}
+
+{% block breadcrumb %}
+<nav aria-label="breadcrumb" class="mt-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard:home' %}">{% trans "Dashboard" %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'dashboard:announcement_list' %}">{% trans "Duyurular" %}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">
+            {% if announcement %}
+                {% trans "Duyuru Düzenle" %}
+            {% else %}
+                {% trans "Yeni Duyuru" %}
+            {% endif %}
+        </li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-3">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">
+            {% if announcement %}
+                {% trans "Duyuru Düzenle" %}
+            {% else %}
+                {% trans "Yeni Duyuru" %}
+            {% endif %}
+        </h1>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                {{ form.title|as_crispy_field }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                {{ form.content|as_crispy_field }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.priority|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.is_active|as_crispy_field }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.start_date|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.end_date|as_crispy_field }}
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a href="{% url 'dashboard:announcement_list' %}" class="btn btn-outline-secondary me-md-2">
+                                <i class="fas fa-times me-1"></i> {% trans "İptal" %}
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i> {% trans "Kaydet" %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">{% trans "Bilgiler" %}</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        {% if announcement %}
+                            <strong>{% trans "Oluşturulma Tarihi:" %}</strong> {{ announcement.created_at|date:"d.m.Y H:i" }}<br>
+                            <strong>{% trans "Son Güncelleme:" %}</strong> {{ announcement.updated_at|date:"d.m.Y H:i" }}<br>
+                            <strong>{% trans "Oluşturan:" %}</strong> {{ announcement.created_by.get_full_name }}
+                        {% else %}
+                            <i class="fas fa-info-circle me-2"></i> {% trans "Yeni bir duyuru oluşturuyorsunuz. Duyuru oluşturulduktan sonra, aktif olarak işaretlenirse tüm kullanıcılar tarafından görüntülenebilir olacaktır." %}
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">{% trans "Yardım" %}</h5>
+                </div>
+                <div class="card-body">
+                    <h6>{% trans "Öncelik Seviyeleri:" %}</h6>
+                    <ul class="list-unstyled">
+                        <li><span class="badge bg-danger me-1">{% trans "Acil" %}</span> {% trans "Çok önemli ve acil duyurular" %}</li>
+                        <li><span class="badge bg-warning me-1">{% trans "Yüksek" %}</span> {% trans "Önemli duyurular" %}</li>
+                        <li><span class="badge bg-info me-1">{% trans "Orta" %}</span> {% trans "Normal öncelikli duyurular" %}</li>
+                        <li><span class="badge bg-secondary me-1">{% trans "Düşük" %}</span> {% trans "Bilgilendirme amaçlı duyurular" %}</li>
+                    </ul>
+                    
+                    <h6 class="mt-3">{% trans "Tarihler:" %}</h6>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-calendar-day me-1"></i> {% trans "Başlangıç Tarihi: Duyurunun görüntülenmeye başlayacağı tarih" %}</li>
+                        <li><i class="fas fa-calendar-times me-1"></i> {% trans "Bitiş Tarihi: Duyurunun otomatik olarak pasif hale geleceği tarih (opsiyonel)" %}</li>
+                    </ul>
+                    
+                    <div class="alert alert-info mt-3">
+                        <i class="fas fa-info-circle me-2"></i> {% trans "Duyuru içeriğinde HTML formatlaması kullanabilirsiniz." %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Tarih seçicileri için varsayılan değerler
+        var startDateInput = document.getElementById('id_start_date');
+        if (startDateInput && !startDateInput.value) {
+            var today = new Date();
+            var year = today.getFullYear();
+            var month = String(today.getMonth() + 1).padStart(2, '0');
+            var day = String(today.getDate()).padStart(2, '0');
+            
+            startDateInput.value = `${year}-${month}-${day}`;
+        }
+        
+        var endDateInput = document.getElementById('id_end_date');
+        if (endDateInput && !endDateInput.value) {
+            var future = new Date();
+            future.setDate(future.getDate() + 30); // Varsayılan olarak 30 gün sonra
+            
+            var year = future.getFullYear();
+            var month = String(future.getMonth() + 1).padStart(2, '0');
+            var day = String(future.getDate()).padStart(2, '0');
+            
+            endDateInput.value = `${year}-${month}-${day}`;
+        }
+    });
+</script>
+{% endblock %} 

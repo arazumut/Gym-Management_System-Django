@@ -1,0 +1,309 @@
+{% extends 'base/base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Personel Paneli" %} | Spor Salonu Yönetim Sistemi{% endblock %}
+
+{% block breadcrumb %}
+<nav aria-label="breadcrumb" class="mt-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active" aria-current="page">{% trans "Personel Paneli" %}</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-3">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">{% trans "Personel Paneli" %}</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group me-2">
+                <a href="{% url 'staff:profile' %}" class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-user-edit me-1"></i> {% trans "Profili Düzenle" %}
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Personel Bilgileri -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <i class="fas fa-id-card me-2"></i>{% trans "Personel Bilgileri" %}
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-user-circle fa-5x text-primary"></i>
+                    </div>
+                    <h5 class="card-title text-center mb-3">{{ user.get_full_name }}</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>{% trans "Departman" %}:</span>
+                            <span class="badge bg-primary rounded-pill">{{ staff_profile.department.name|default:_("Atanmamış") }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>{% trans "Pozisyon" %}:</span>
+                            <span class="badge bg-info rounded-pill">{{ staff_profile.position }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>{% trans "Çalışma Tipi" %}:</span>
+                            <span class="badge bg-secondary rounded-pill">{{ staff_profile.get_employment_type_display }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>{% trans "İşe Başlama Tarihi" %}:</span>
+                            <span>{{ staff_profile.hire_date|date:"d.m.Y" }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>{% trans "Çalışma Süresi" %}:</span>
+                            <span>{{ staff_profile.employment_duration }} {% trans "gün" %}</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-footer text-end">
+                    <a href="{% url 'staff:profile' %}" class="btn btn-sm btn-outline-primary">{% trans "Detaylar" %}</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bugünkü Devam Durumu -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <i class="fas fa-clock me-2"></i>{% trans "Bugünkü Devam Durumu" %}
+                </div>
+                <div class="card-body">
+                    {% if attendance %}
+                        <div class="text-center mb-4">
+                            <div class="display-1 mb-2">
+                                {% if attendance.status == 'present' %}
+                                    <i class="fas fa-check-circle text-success"></i>
+                                {% elif attendance.status == 'absent' %}
+                                    <i class="fas fa-times-circle text-danger"></i>
+                                {% elif attendance.status == 'late' %}
+                                    <i class="fas fa-exclamation-circle text-warning"></i>
+                                {% elif attendance.status == 'half_day' %}
+                                    <i class="fas fa-adjust text-info"></i>
+                                {% elif attendance.status == 'leave' %}
+                                    <i class="fas fa-calendar-minus text-secondary"></i>
+                                {% endif %}
+                            </div>
+                            <h5 class="card-title">{{ attendance.get_status_display }}</h5>
+                        </div>
+                        
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>{% trans "Giriş Saati" %}:</span>
+                                <span>{{ attendance.check_in|time:"H:i"|default:"-" }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>{% trans "Çıkış Saati" %}:</span>
+                                <span>{{ attendance.check_out|time:"H:i"|default:"-" }}</span>
+                            </li>
+                            {% if attendance.duration %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>{% trans "Toplam Süre" %}:</span>
+                                <span>{{ attendance.duration }} {% trans "dakika" %}</span>
+                            </li>
+                            {% endif %}
+                        </ul>
+                        
+                        <div class="d-grid gap-2 mt-3">
+                            {% if not attendance.check_in %}
+                                <a href="{% url 'staff:attendance_check_in' %}" class="btn btn-success">
+                                    <i class="fas fa-sign-in-alt me-1"></i> {% trans "Giriş Yap" %}
+                                </a>
+                            {% elif not attendance.check_out %}
+                                <a href="{% url 'staff:attendance_check_out' %}" class="btn btn-danger">
+                                    <i class="fas fa-sign-out-alt me-1"></i> {% trans "Çıkış Yap" %}
+                                </a>
+                            {% else %}
+                                <button class="btn btn-secondary" disabled>
+                                    <i class="fas fa-check-double me-1"></i> {% trans "Giriş-Çıkış Tamamlandı" %}
+                                </button>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <div class="text-center mb-4">
+                            <div class="display-1 mb-2">
+                                <i class="fas fa-question-circle text-secondary"></i>
+                            </div>
+                            <h5 class="card-title">{% trans "Henüz Giriş Yapılmadı" %}</h5>
+                        </div>
+                        
+                        <div class="d-grid gap-2 mt-3">
+                            <a href="{% url 'staff:attendance_check_in' %}" class="btn btn-success">
+                                <i class="fas fa-sign-in-alt me-1"></i> {% trans "Giriş Yap" %}
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer text-end">
+                    <a href="{% url 'staff:attendance_list' %}" class="btn btn-sm btn-outline-info">{% trans "Devam Kayıtları" %}</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bugünkü Vardiya -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <i class="fas fa-calendar-day me-2"></i>{% trans "Bugünkü Vardiya" %}
+                </div>
+                <div class="card-body">
+                    {% if shift_assignment %}
+                        <div class="text-center mb-4">
+                            <div class="display-1 mb-2">
+                                <i class="fas fa-calendar-check text-success"></i>
+                            </div>
+                            <h5 class="card-title">{{ shift_assignment.shift.name }}</h5>
+                        </div>
+                        
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>{% trans "Başlangıç Saati" %}:</span>
+                                <span>{{ shift_assignment.shift.start_time|time:"H:i" }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>{% trans "Bitiş Saati" %}:</span>
+                                <span>{{ shift_assignment.shift.end_time|time:"H:i" }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>{% trans "Süre" %}:</span>
+                                <span>{{ shift_assignment.shift.duration_hours|floatformat:1 }} {% trans "saat" %}</span>
+                            </li>
+                        </ul>
+                    {% else %}
+                        <div class="text-center mb-4">
+                            <div class="display-1 mb-2">
+                                <i class="fas fa-calendar-times text-secondary"></i>
+                            </div>
+                            <h5 class="card-title">{% trans "Bugün İçin Vardiya Atanmamış" %}</h5>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer text-end">
+                    <a href="{% url 'staff:shift_list' %}" class="btn btn-sm btn-outline-warning">{% trans "Vardiya Listesi" %}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- İzin Talepleri -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <i class="fas fa-calendar-alt me-2"></i>{% trans "İzin Talepleri" %}
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% if pending_leaves %}
+                            {% for leave in pending_leaves %}
+                            <a href="{% url 'staff:leave_detail' leave.pk %}" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ leave.get_leave_type_display }}</h6>
+                                    <small class="text-muted">{{ leave.days }} {% trans "gün" %}</small>
+                                </div>
+                                <p class="mb-1">{{ leave.start_date|date:"d.m.Y" }} - {{ leave.end_date|date:"d.m.Y" }}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small>{{ leave.reason|truncatewords:10 }}</small>
+                                    <span class="badge bg-{% if leave.status == 'pending' %}warning{% elif leave.status == 'approved' %}success{% elif leave.status == 'rejected' %}danger{% else %}secondary{% endif %}">
+                                        {{ leave.get_status_display }}
+                                    </span>
+                                </div>
+                            </a>
+                            {% endfor %}
+                        {% else %}
+                            <div class="list-group-item text-center py-4">
+                                <i class="fas fa-check-circle text-success mb-2" style="font-size: 2rem;"></i>
+                                <p class="mb-0">{% trans "Bekleyen izin talebiniz yok." %}</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-footer d-flex justify-content-between align-items-center">
+                    <a href="{% url 'staff:leave_request' %}" class="btn btn-sm btn-success">
+                        <i class="fas fa-plus me-1"></i> {% trans "Yeni İzin Talebi" %}
+                    </a>
+                    <a href="{% url 'staff:leave_list' %}" class="btn btn-sm btn-outline-success">{% trans "Tüm İzinler" %}</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Performans ve Maaş -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                    <i class="fas fa-chart-line me-2"></i>{% trans "Performans ve Maaş" %}
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Performans -->
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100 border-0">
+                                <div class="card-body">
+                                    <h5 class="card-title">{% trans "Son Performans Değerlendirmesi" %}</h5>
+                                    {% if latest_performance %}
+                                        <div class="text-center mb-3">
+                                            <div class="display-4">{{ latest_performance.overall_rating }}/5</div>
+                                            <div class="text-muted">{{ latest_performance.review_date|date:"d.m.Y" }}</div>
+                                        </div>
+                                        <div class="progress mb-2">
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: {{ latest_performance.overall_rating|mul:20 }}%" aria-valuenow="{{ latest_performance.overall_rating }}" aria-valuemin="0" aria-valuemax="5"></div>
+                                        </div>
+                                        <div class="text-end mt-3">
+                                            <a href="{% url 'staff:performance_detail' latest_performance.pk %}" class="btn btn-sm btn-outline-secondary">{% trans "Detaylar" %}</a>
+                                        </div>
+                                    {% else %}
+                                        <div class="text-center py-4">
+                                            <i class="fas fa-chart-bar text-secondary mb-2" style="font-size: 2rem;"></i>
+                                            <p class="mb-0">{% trans "Henüz performans değerlendirmesi yapılmamış." %}</p>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Maaş -->
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100 border-0">
+                                <div class="card-body">
+                                    <h5 class="card-title">{% trans "Son Maaş Bordrosu" %}</h5>
+                                    {% if latest_payroll %}
+                                        <div class="text-center mb-3">
+                                            <div class="display-4">{{ latest_payroll.net_salary|floatformat:2 }} ₺</div>
+                                            <div class="text-muted">{{ latest_payroll.period_start|date:"M Y" }}</div>
+                                        </div>
+                                        <ul class="list-group list-group-flush small">
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <span>{% trans "Temel Maaş" %}:</span>
+                                                <span>{{ latest_payroll.basic_salary|floatformat:2 }} ₺</span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <span>{% trans "Fazla Mesai" %}:</span>
+                                                <span>{{ latest_payroll.overtime_amount|floatformat:2 }} ₺</span>
+                                            </li>
+                                        </ul>
+                                        <div class="text-end mt-3">
+                                            <a href="{% url 'staff:payroll_detail' latest_payroll.pk %}" class="btn btn-sm btn-outline-secondary">{% trans "Detaylar" %}</a>
+                                        </div>
+                                    {% else %}
+                                        <div class="text-center py-4">
+                                            <i class="fas fa-money-bill-wave text-secondary mb-2" style="font-size: 2rem;"></i>
+                                            <p class="mb-0">{% trans "Henüz maaş bordrosu oluşturulmamış." %}</p>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer d-flex justify-content-between align-items-center">
+                    <a href="{% url 'staff:performance_list' %}" class="btn btn-sm btn-outline-secondary">{% trans "Performans Geçmişi" %}</a>
+                    <a href="{% url 'staff:payroll_list' %}" class="btn btn-sm btn-outline-secondary">{% trans "Maaş Geçmişi" %}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

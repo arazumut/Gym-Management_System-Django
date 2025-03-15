@@ -1,0 +1,183 @@
+{% extends 'base/base.html' %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    {% if leave_request %}
+        {% trans "İzin Talebi Düzenle" %} | Spor Salonu Yönetim Sistemi
+    {% else %}
+        {% trans "Yeni İzin Talebi" %} | Spor Salonu Yönetim Sistemi
+    {% endif %}
+{% endblock %}
+
+{% block breadcrumb %}
+<nav aria-label="breadcrumb" class="mt-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'staff:home' %}">{% trans "Personel Paneli" %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'staff:leave_request_list' %}">{% trans "İzin Talepleri" %}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">
+            {% if leave_request %}
+                {% trans "İzin Talebi Düzenle" %}
+            {% else %}
+                {% trans "Yeni İzin Talebi" %}
+            {% endif %}
+        </li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-3">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">
+            {% if leave_request %}
+                {% trans "İzin Talebi Düzenle" %}
+            {% else %}
+                {% trans "Yeni İzin Talebi" %}
+            {% endif %}
+        </h1>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form method="post" id="leave-form">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form.leave_type|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.days|as_crispy_field }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form.start_date|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.end_date|as_crispy_field }}
+                            </div>
+                        </div>
+                        
+                        {{ form.reason|as_crispy_field }}
+                        
+                        {% if form.attachment %}
+                            {{ form.attachment|as_crispy_field }}
+                        {% endif %}
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a href="{% url 'staff:leave_request_list' %}" class="btn btn-outline-secondary me-md-2">
+                                <i class="fas fa-times me-1"></i> {% trans "İptal" %}
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i> {% trans "Kaydet" %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <!-- İzin Bilgileri -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">{% trans "İzin Bilgileri" %}</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">{% trans "İzin talebiniz aşağıdaki adımlardan geçecektir:" %}</p>
+                    <ol>
+                        <li>{% trans "İzin talebi oluşturulur" %}</li>
+                        <li>{% trans "Departman yöneticiniz talebi inceler" %}</li>
+                        <li>{% trans "Talep onaylanır veya reddedilir" %}</li>
+                        <li>{% trans "Onaylanan izinler İK departmanına iletilir" %}</li>
+                    </ol>
+                    <hr>
+                    <p class="mb-1"><strong>{% trans "İzin Bakiyeniz:" %}</strong></p>
+                    <ul class="list-unstyled">
+                        <li>{% trans "Yıllık İzin:" %} <span class="badge bg-info">{{ leave_balance.annual.remaining|default:"0" }} {% trans "gün" %}</span></li>
+                        <li>{% trans "Hastalık İzni:" %} <span class="badge bg-info">{{ leave_balance.sick.remaining|default:"0" }} {% trans "gün" %}</span></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- İzin Türleri -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">{% trans "İzin Türleri" %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6 class="fw-bold">{% trans "Yıllık İzin" %}</h6>
+                        <p class="text-muted small">{% trans "Çalışanların yıllık olarak hak kazandığı ücretli izin." %}</p>
+                    </div>
+                    <div class="mb-3">
+                        <h6 class="fw-bold">{% trans "Hastalık İzni" %}</h6>
+                        <p class="text-muted small">{% trans "Sağlık sorunları nedeniyle kullanılan izin. Doktor raporu gerektirebilir." %}</p>
+                    </div>
+                    <div class="mb-3">
+                        <h6 class="fw-bold">{% trans "Doğum İzni" %}</h6>
+                        <p class="text-muted small">{% trans "Doğum yapan çalışanlar için verilen izin. Yasal süre uygulanır." %}</p>
+                    </div>
+                    <div class="mb-3">
+                        <h6 class="fw-bold">{% trans "Babalık İzni" %}</h6>
+                        <p class="text-muted small">{% trans "Çocuğu olan erkek çalışanlar için verilen kısa süreli izin." %}</p>
+                    </div>
+                    <div class="mb-3">
+                        <h6 class="fw-bold">{% trans "Ölüm İzni" %}</h6>
+                        <p class="text-muted small">{% trans "Yakın aile üyelerinin vefatı durumunda verilen izin." %}</p>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold">{% trans "Ücretsiz İzin" %}</h6>
+                        <p class="text-muted small mb-0">{% trans "Özel durumlarda talep edilebilen, maaş ödemesi yapılmayan izin." %}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Tarih seçicileri için varsayılan değerler
+        var startDateInput = document.getElementById('id_start_date');
+        var endDateInput = document.getElementById('id_end_date');
+        var daysInput = document.getElementById('id_days');
+        
+        // Tarih değişikliklerini izle
+        startDateInput.addEventListener('change', calculateDays);
+        endDateInput.addEventListener('change', calculateDays);
+        
+        // Gün sayısını hesapla
+        function calculateDays() {
+            if (startDateInput.value && endDateInput.value) {
+                var startDate = new Date(startDateInput.value);
+                var endDate = new Date(endDateInput.value);
+                
+                // Tarih farkını hesapla (milisaniye cinsinden)
+                var timeDiff = endDate.getTime() - startDate.getTime();
+                
+                // Gün sayısını hesapla (milisaniyeyi güne çevir ve 1 ekle - başlangıç ve bitiş günleri dahil)
+                var dayDiff = Math.floor(timeDiff / (1000 * 3600 * 24)) + 1;
+                
+                // Negatif değer kontrolü
+                if (dayDiff < 1) {
+                    dayDiff = 0;
+                }
+                
+                // Gün sayısını güncelle
+                daysInput.value = dayDiff;
+            }
+        }
+        
+        // Sayfa yüklendiğinde gün sayısını hesapla
+        calculateDays();
+    });
+</script>
+{% endblock %} 

@@ -1,0 +1,88 @@
+{% load i18n %}
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'home' %}">
+            <i class="fas fa-dumbbell me-2"></i>Spor Salonu Yönetim Sistemi
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.app_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard:home' %}">
+                        <i class="fas fa-tachometer-alt me-1"></i>{% trans "Dashboard" %}
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+            
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                {% if user.is_authenticated %}
+                <!-- Bildirimler -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="notificationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-bell me-1"></i>
+                        <span class="badge bg-danger rounded-pill notification-badge">0</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown" style="width: 300px;">
+                        <li><h6 class="dropdown-header">{% trans "Bildirimler" %}</h6></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <div id="notifications-container">
+                            <li><a class="dropdown-item text-center" href="#">{% trans "Bildirim yok" %}</a></li>
+                        </div>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-center" href="{% url 'dashboard:notification_list' %}">{% trans "Tüm Bildirimleri Gör" %}</a></li>
+                    </ul>
+                </li>
+                
+                <!-- Kullanıcı Menüsü -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-circle me-1"></i>{{ user.get_full_name|default:user.username }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li><h6 class="dropdown-header">{{ user.email }}</h6></li>
+                        <li><hr class="dropdown-divider"></li>
+                        {% if user.role == 'staff' %}
+                        <li><a class="dropdown-item" href="{% url 'staff:profile' %}"><i class="fas fa-id-card me-2"></i>{% trans "Profilim" %}</a></li>
+                        {% endif %}
+                        <li><a class="dropdown-item" href="{% url 'account_change_password' %}"><i class="fas fa-key me-2"></i>{% trans "Şifre Değiştir" %}</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'account_logout' %}"><i class="fas fa-sign-out-alt me-2"></i>{% trans "Çıkış Yap" %}</a></li>
+                    </ul>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'account_login' %}"><i class="fas fa-sign-in-alt me-1"></i>{% trans "Giriş Yap" %}</a>
+                </li>
+                {% endif %}
+                
+                <!-- Dil Seçimi -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-globe me-1"></i>{% trans "Dil" %}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
+                        {% get_available_languages as LANGUAGES %}
+                        {% get_language_info_list for LANGUAGES as languages %}
+                        {% for language in languages %}
+                        <li>
+                            <form action="{% url 'set_language' %}" method="post" class="d-inline">
+                                {% csrf_token %}
+                                <input name="next" type="hidden" value="{{ request.path }}">
+                                <input name="language" type="hidden" value="{{ language.code }}">
+                                <button type="submit" class="dropdown-item {% if language.code == LANGUAGE_CODE %}active{% endif %}">
+                                    {{ language.name_local }}
+                                </button>
+                            </form>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav> 

@@ -1,0 +1,72 @@
+{% extends 'base/base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Widget Listesi" %} | Spor Salonu Yönetim Sistemi{% endblock %}
+
+{% block breadcrumb %}
+<nav aria-label="breadcrumb" class="mt-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard:home' %}">{% trans "Dashboard" %}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{% trans "Widget Listesi" %}</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-3">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">{% trans "Widget Listesi" %}</h1>
+    </div>
+    
+    <div class="row">
+        {% for widget in widgets %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">{{ widget.name }}</h5>
+                    <span class="badge bg-{% if widget.widget_type == 'members_count' %}primary{% elif widget.widget_type == 'active_memberships' %}success{% elif widget.widget_type == 'revenue_chart' %}info{% elif widget.widget_type == 'expense_chart' %}warning{% elif widget.widget_type == 'attendance_chart' %}secondary{% else %}dark{% endif %}">
+                        {{ widget.get_widget_type_display }}
+                    </span>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">{{ widget.description|default:_("Bu widget için açıklama bulunmamaktadır.") }}</p>
+                    <p class="card-text">
+                        <small class="text-muted">
+                            {% trans "Boyut" %}: 
+                            {% if widget.size == 'small' %}
+                                <span class="badge bg-secondary">{% trans "Küçük" %}</span>
+                            {% elif widget.size == 'medium' %}
+                                <span class="badge bg-secondary">{% trans "Orta" %}</span>
+                            {% elif widget.size == 'large' %}
+                                <span class="badge bg-secondary">{% trans "Büyük" %}</span>
+                            {% endif %}
+                        </small>
+                    </p>
+                </div>
+                <div class="card-footer">
+                    {% if widget.id in user_widgets %}
+                    <button class="btn btn-sm btn-secondary w-100" disabled>
+                        <i class="fas fa-check me-1"></i> {% trans "Eklenmiş" %}
+                    </button>
+                    {% else %}
+                    <form method="post" action="{% url 'dashboard:widget_add' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="widget_id" value="{{ widget.id }}">
+                        <button type="submit" class="btn btn-sm btn-primary w-100">
+                            <i class="fas fa-plus me-1"></i> {% trans "Ekle" %}
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>{% trans "Henüz hiç widget tanımlanmamış." %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %} 

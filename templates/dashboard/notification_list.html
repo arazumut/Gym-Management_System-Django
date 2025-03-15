@@ -1,0 +1,329 @@
+{% extends "base/base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans "Bildirimler" %} | Spor Salonu Yönetim Sistemi{% endblock %}
+
+{% block breadcrumb %}
+<nav aria-label="breadcrumb" class="mt-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard:home' %}">{% trans "Dashboard" %}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{% trans "Bildirimler" %}</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-3">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">{% trans "Bildirimler" %}</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="markAllReadBtn">
+                <i class="fas fa-check-double me-1"></i> {% trans "Tümünü Okundu İşaretle" %}
+            </button>
+        </div>
+    </div>
+    
+    <!-- Filtreler -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <label for="is_read" class="form-label">{% trans "Durum" %}</label>
+                    <select class="form-select" id="is_read" name="is_read">
+                        <option value="">{% trans "Tümü" %}</option>
+                        <option value="false" {% if is_read == 'false' %}selected{% endif %}>{% trans "Okunmamış" %}</option>
+                        <option value="true" {% if is_read == 'true' %}selected{% endif %}>{% trans "Okunmuş" %}</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="notification_type" class="form-label">{% trans "Bildirim Türü" %}</label>
+                    <select class="form-select" id="notification_type" name="notification_type">
+                        <option value="">{% trans "Tümü" %}</option>
+                        <option value="info" {% if notification_type == 'info' %}selected{% endif %}>{% trans "Bilgi" %}</option>
+                        <option value="success" {% if notification_type == 'success' %}selected{% endif %}>{% trans "Başarı" %}</option>
+                        <option value="warning" {% if notification_type == 'warning' %}selected{% endif %}>{% trans "Uyarı" %}</option>
+                        <option value="error" {% if notification_type == 'error' %}selected{% endif %}>{% trans "Hata" %}</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-filter me-1"></i> {% trans "Filtrele" %}
+                    </button>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <a href="{% url 'dashboard:notification_list' %}" class="btn btn-outline-secondary w-100">
+                        <i class="fas fa-redo me-1"></i> {% trans "Sıfırla" %}
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Bildirimler Listesi -->
+    <div class="card">
+        <div class="card-body p-0">
+            <div class="list-group list-group-flush">
+                {% for notification in page_obj %}
+                <a href="{{ notification.link|default:'#' }}" class="list-group-item list-group-item-action {% if not notification.is_read %}list-group-item-light{% endif %}" data-id="{{ notification.id }}">
+                    <div class="d-flex w-100 justify-content-between align-items-center">
+                        <div>
+                            <div class="d-flex align-items-center mb-1">
+                                <span class="notification-icon me-3">
+                                    {% if notification.notification_type == 'info' %}
+                                        <i class="fas fa-info-circle fa-2x text-info"></i>
+                                    {% elif notification.notification_type == 'success' %}
+                                        <i class="fas fa-check-circle fa-2x text-success"></i>
+                                    {% elif notification.notification_type == 'warning' %}
+                                        <i class="fas fa-exclamation-triangle fa-2x text-warning"></i>
+                                    {% elif notification.notification_type == 'error' %}
+                                        <i class="fas fa-times-circle fa-2x text-danger"></i>
+                                    {% else %}
+                                        <i class="fas fa-bell fa-2x text-secondary"></i>
+                                    {% endif %}
+                                </span>
+                                <div>
+                                    <h5 class="mb-1">{{ notification.title }}</h5>
+                                    <p class="mb-1">{{ notification.message }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <small class="text-muted d-block">{{ notification.created_at|date:"d.m.Y H:i" }}</small>
+                            {% if not notification.is_read %}
+                                <span class="badge bg-primary">{% trans "Yeni" %}</span>
+                            {% endif %}
+                            <div class="mt-2">
+                                <button class="btn btn-sm btn-outline-secondary mark-read-btn" data-id="{{ notification.id }}" {% if notification.is_read %}disabled{% endif %}>
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                {% empty %}
+                <div class="text-center py-5">
+                    <i class="fas fa-bell-slash fa-4x text-muted mb-3"></i>
+                    <h5>{% trans "Bildirim Bulunamadı" %}</h5>
+                    <p class="text-muted">{% trans "Henüz hiç bildiriminiz yok veya filtrelere uygun bildirim bulunamadı." %}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Sayfalama -->
+        {% if page_obj.has_other_pages %}
+        <div class="card-footer">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center mb-0">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1{% if is_read %}&is_read={{ is_read }}{% endif %}{% if notification_type %}&notification_type={{ notification_type }}{% endif %}" aria-label="First">
+                            <span aria-hidden="true">&laquo;&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if is_read %}&is_read={{ is_read }}{% endif %}{% if notification_type %}&notification_type={{ notification_type }}{% endif %}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item"><a class="page-link" href="?page={{ num }}{% if is_read %}&is_read={{ is_read }}{% endif %}{% if notification_type %}&notification_type={{ notification_type }}{% endif %}">{{ num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if is_read %}&is_read={{ is_read }}{% endif %}{% if notification_type %}&notification_type={{ notification_type }}{% endif %}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if is_read %}&is_read={{ is_read }}{% endif %}{% if notification_type %}&notification_type={{ notification_type }}{% endif %}" aria-label="Last">
+                            <span aria-hidden="true">&raquo;&raquo;</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Bildirim İstatistikleri -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">{% trans "Bildirim İstatistikleri" %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <div class="display-6">{{ stats.total|default:"0" }}</div>
+                            <p class="text-muted">{% trans "Toplam Bildirim" %}</p>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="display-6">{{ stats.unread|default:"0" }}</div>
+                            <p class="text-muted">{% trans "Okunmamış" %}</p>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="display-6">{{ stats.read|default:"0" }}</div>
+                            <p class="text-muted">{% trans "Okunmuş" %}</p>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="display-6">{{ stats.today|default:"0" }}</div>
+                            <p class="text-muted">{% trans "Bugün" %}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Tek bir bildirimi okundu olarak işaretle
+        const markReadButtons = document.querySelectorAll('.mark-read-btn');
+        markReadButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const notificationId = this.getAttribute('data-id');
+                markAsRead(notificationId, this);
+            });
+        });
+        
+        // Tüm bildirimleri okundu olarak işaretle
+        const markAllReadBtn = document.getElementById('markAllReadBtn');
+        if (markAllReadBtn) {
+            markAllReadBtn.addEventListener('click', function() {
+                markAllAsRead();
+            });
+        }
+        
+        // Bildirimi okundu olarak işaretleme fonksiyonu
+        function markAsRead(notificationId, button) {
+            fetch(`/dashboard/notifications/${notificationId}/mark-read/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Butonu devre dışı bırak
+                    button.disabled = true;
+                    
+                    // Bildirim öğesinden "Yeni" etiketini kaldır
+                    const notificationItem = button.closest('.list-group-item');
+                    const badge = notificationItem.querySelector('.badge');
+                    if (badge) badge.remove();
+                    
+                    // Arka plan rengini güncelle
+                    notificationItem.classList.remove('list-group-item-light');
+                    
+                    // Bildirim sayısını güncelle
+                    updateNotificationCount();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+        
+        // Tüm bildirimleri okundu olarak işaretleme fonksiyonu
+        function markAllAsRead() {
+            fetch('/dashboard/notifications/mark-all-read/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Sayfayı yenile
+                    window.location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+        
+        // CSRF token alma fonksiyonu
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        // Bildirim sayısını güncelleme fonksiyonu
+        function updateNotificationCount() {
+            fetch('/dashboard/notifications/?is_read=false&format=json')
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.querySelector('.notification-badge');
+                    if (badge) {
+                        badge.textContent = data.count || 0;
+                        
+                        if (data.count > 0) {
+                            badge.style.display = 'inline-block';
+                        } else {
+                            badge.style.display = 'none';
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+    });
+</script>
+
+<style>
+    .list-group-item {
+        transition: all 0.3s ease;
+    }
+    
+    .list-group-item:hover {
+        background-color: rgba(0, 123, 255, 0.05);
+    }
+    
+    .notification-icon {
+        width: 40px;
+        text-align: center;
+    }
+    
+    .mark-read-btn {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .list-group-item:hover .mark-read-btn {
+        opacity: 1;
+    }
+</style>
+{% endblock %} 

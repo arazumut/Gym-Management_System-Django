@@ -1,0 +1,270 @@
+{% extends "base/base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans "Ana Sayfa" %} | Spor Salonu Yönetim Sistemi{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-6">
+            <h1 class="display-4 fw-bold">{% trans "Spor Salonu Yönetim Sistemi" %}</h1>
+            <p class="lead">{% trans "Spor salonunuzu daha verimli yönetmek için tasarlanmış kapsamlı bir çözüm." %}</p>
+            <hr class="my-4">
+            <p>{% trans "Üye yönetimi, personel takibi, ders programları, finansal işlemler ve daha fazlası için tek bir platform." %}</p>
+            
+            {% if not user.is_authenticated %}
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                <a href="{% url 'account_login' %}" class="btn btn-primary btn-lg px-4 me-md-2">{% trans "Giriş Yap" %}</a>
+                <a href="{% url 'account_signup' %}" class="btn btn-outline-secondary btn-lg px-4">{% trans "Kayıt Ol" %}</a>
+            </div>
+            {% else %}
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                <a href="{% url 'dashboard:home' %}" class="btn btn-primary btn-lg px-4">{% trans "Dashboard'a Git" %}</a>
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-md-6 d-flex align-items-center justify-content-center">
+            <img src="{% static 'img/gym-hero.jpg' %}" class="img-fluid rounded shadow" alt="{% trans 'Spor Salonu Yönetim Sistemi' %}">
+        </div>
+    </div>
+    
+    <div class="row mt-5 pt-5">
+        <div class="col-12 text-center mb-4">
+            <h2 class="fw-bold">{% trans "Özellikler" %}</h2>
+            <p class="lead">{% trans "Spor salonunuzu yönetmek için ihtiyacınız olan her şey" %}</p>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                    <h3 class="card-title">{% trans "Üye Yönetimi" %}</h3>
+                    <p class="card-text">{% trans "Üye kayıtları, üyelik planları, ödeme takibi ve otomatik bildirimler." %}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar-alt fa-3x text-primary mb-3"></i>
+                    <h3 class="card-title">{% trans "Ders Programları" %}</h3>
+                    <p class="card-text">{% trans "Ders planlaması, katılım takibi ve eğitmen atamaları." %}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-money-bill-wave fa-3x text-primary mb-3"></i>
+                    <h3 class="card-title">{% trans "Finansal Yönetim" %}</h3>
+                    <p class="card-text">{% trans "Gelir-gider takibi, fatura oluşturma ve finansal raporlar." %}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-user-tie fa-3x text-primary mb-3"></i>
+                    <h3 class="card-title">{% trans "Personel Yönetimi" %}</h3>
+                    <p class="card-text">{% trans "Personel kayıtları, vardiya planlaması ve performans değerlendirmeleri." %}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-boxes fa-3x text-primary mb-3"></i>
+                    <h3 class="card-title">{% trans "Envanter Yönetimi" %}</h3>
+                    <p class="card-text">{% trans "Ekipman takibi, stok yönetimi ve bakım planlaması." %}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-bar fa-3x text-primary mb-3"></i>
+                    <h3 class="card-title">{% trans "Raporlar ve Analizler" %}</h3>
+                    <p class="card-text">{% trans "Detaylı raporlar, performans analizleri ve iş zekası araçları." %}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-5 bg-light py-5 rounded shadow-sm">
+        <div class="col-12 text-center mb-4">
+            <h2 class="fw-bold">{% trans "Neden Bizi Seçmelisiniz?" %}</h2>
+            <p class="lead">{% trans "Spor salonu yönetimini kolaylaştıran çözümler" %}</p>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="d-flex mb-4">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-check-circle text-success fa-2x me-3"></i>
+                </div>
+                <div>
+                    <h4>{% trans "Kullanımı Kolay Arayüz" %}</h4>
+                    <p>{% trans "Sezgisel ve kullanıcı dostu arayüz ile hızlı ve kolay kullanım." %}</p>
+                </div>
+            </div>
+            
+            <div class="d-flex mb-4">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-check-circle text-success fa-2x me-3"></i>
+                </div>
+                <div>
+                    <h4>{% trans "Mobil Uyumlu" %}</h4>
+                    <p>{% trans "Her cihazda mükemmel çalışan duyarlı tasarım." %}</p>
+                </div>
+            </div>
+            
+            <div class="d-flex mb-4">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-check-circle text-success fa-2x me-3"></i>
+                </div>
+                <div>
+                    <h4>{% trans "Güvenli ve Güvenilir" %}</h4>
+                    <p>{% trans "Verileriniz güvende, sistemimiz 7/24 çalışır durumda." %}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="d-flex mb-4">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-check-circle text-success fa-2x me-3"></i>
+                </div>
+                <div>
+                    <h4>{% trans "Özelleştirilebilir" %}</h4>
+                    <p>{% trans "İhtiyaçlarınıza göre özelleştirilebilir modüller ve raporlar." %}</p>
+                </div>
+            </div>
+            
+            <div class="d-flex mb-4">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-check-circle text-success fa-2x me-3"></i>
+                </div>
+                <div>
+                    <h4>{% trans "Entegrasyonlar" %}</h4>
+                    <p>{% trans "Ödeme sistemleri, CRM ve diğer araçlarla kolay entegrasyon." %}</p>
+                </div>
+            </div>
+            
+            <div class="d-flex mb-4">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-check-circle text-success fa-2x me-3"></i>
+                </div>
+                <div>
+                    <h4>{% trans "7/24 Destek" %}</h4>
+                    <p>{% trans "Uzman ekibimiz her zaman yardıma hazır." %}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-5 pt-3">
+        <div class="col-12 text-center mb-4">
+            <h2 class="fw-bold">{% trans "Müşteri Yorumları" %}</h2>
+            <p class="lead">{% trans "Müşterilerimizin deneyimleri" %}</p>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-center mb-3">
+                        <span class="text-warning">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </span>
+                    </div>
+                    <p class="card-text text-center fst-italic">
+                        "{% trans "Bu sistem sayesinde spor salonumuzun yönetimi çok daha kolay hale geldi. Üye takibi ve finansal raporlama özellikleri mükemmel." %}"
+                    </p>
+                    <div class="text-center mt-3">
+                        <h5 class="card-title mb-0">Ahmet Yılmaz</h5>
+                        <p class="text-muted small">{% trans "Fitness Center Sahibi" %}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-center mb-3">
+                        <span class="text-warning">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </span>
+                    </div>
+                    <p class="card-text text-center fst-italic">
+                        "{% trans "Kullanımı çok kolay ve müşteri desteği harika. Artık tüm işlemlerimizi tek bir platformdan yönetiyoruz." %}"
+                    </p>
+                    <div class="text-center mt-3">
+                        <h5 class="card-title mb-0">Ayşe Demir</h5>
+                        <p class="text-muted small">{% trans "Spor Salonu Müdürü" %}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-center mb-3">
+                        <span class="text-warning">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </span>
+                    </div>
+                    <p class="card-text text-center fst-italic">
+                        "{% trans "Ders programları ve eğitmen yönetimi özellikleri sayesinde zaman kazanıyoruz. Kesinlikle tavsiye ederim." %}"
+                    </p>
+                    <div class="text-center mt-3">
+                        <h5 class="card-title mb-0">Mehmet Kaya</h5>
+                        <p class="text-muted small">{% trans "Fitness Eğitmeni" %}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-5 pt-3">
+        <div class="col-12 text-center">
+            <h2 class="fw-bold">{% trans "Hemen Başlayın" %}</h2>
+            <p class="lead mb-4">{% trans "Spor salonunuzu daha verimli yönetmek için hemen kaydolun." %}</p>
+            
+            {% if not user.is_authenticated %}
+            <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                <a href="{% url 'account_signup' %}" class="btn btn-primary btn-lg px-5 py-3">
+                    <i class="fas fa-user-plus me-2"></i>{% trans "Ücretsiz Kaydol" %}
+                </a>
+                <a href="#" class="btn btn-outline-secondary btn-lg px-5 py-3">
+                    <i class="fas fa-info-circle me-2"></i>{% trans "Daha Fazla Bilgi" %}
+                </a>
+            </div>
+            {% else %}
+            <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                <a href="{% url 'dashboard:home' %}" class="btn btn-primary btn-lg px-5 py-3">
+                    <i class="fas fa-tachometer-alt me-2"></i>{% trans "Dashboard'a Git" %}
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

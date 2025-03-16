@@ -1,0 +1,17 @@
+# Django ve temel bileşenler
+Django>=3.2.0,<4.0.0
+djangorestframework>=3.12.0
+django-filter>=2.4.0
+
+# Frontend ve form işlemleri
+django-crispy-forms>=1.11.0
+crispy-bootstrap4>=2.0.0
+django-bootstrap4>=3.0.0
+django-allauth>=0.44.0
+
+# Görüntü ve PDF işleme
+pillow>=8.0.0
+reportlab>=3.5.0
+
+# Yardımcı kütüphaneler
+python-dateutil>=2.8.1

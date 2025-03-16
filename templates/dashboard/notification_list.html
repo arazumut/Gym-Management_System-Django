@@ -24,7 +24,6 @@
         </div>
     </div>
     
-    <!-- Filtreler -->
     <div class="card mb-4">
         <div class="card-body">
             <form method="get" class="row g-3">
@@ -60,7 +59,6 @@
         </div>
     </div>
     
-    <!-- Bildirimler Listesi -->
     <div class="card">
         <div class="card-body p-0">
             <div class="list-group list-group-flush">
@@ -111,7 +109,6 @@
             </div>
         </div>
         
-        <!-- Sayfalama -->
         {% if page_obj.has_other_pages %}
         <div class="card-footer">
             <nav aria-label="Page navigation">
@@ -155,7 +152,6 @@
         {% endif %}
     </div>
     
-    <!-- Bildirim İstatistikleri -->
     <div class="row mt-4">
         <div class="col-md-12">
             <div class="card shadow-sm">
@@ -191,7 +187,6 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Tek bir bildirimi okundu olarak işaretle
         const markReadButtons = document.querySelectorAll('.mark-read-btn');
         markReadButtons.forEach(button => {
             button.addEventListener('click', function(e) {
@@ -203,7 +198,6 @@
             });
         });
         
-        // Tüm bildirimleri okundu olarak işaretle
         const markAllReadBtn = document.getElementById('markAllReadBtn');
         if (markAllReadBtn) {
             markAllReadBtn.addEventListener('click', function() {
@@ -211,7 +205,6 @@
             });
         }
         
-        // Bildirimi okundu olarak işaretleme fonksiyonu
         function markAsRead(notificationId, button) {
             fetch(`/dashboard/notifications/${notificationId}/mark-read/`, {
                 method: 'POST',
@@ -223,18 +216,14 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Butonu devre dışı bırak
                     button.disabled = true;
                     
-                    // Bildirim öğesinden "Yeni" etiketini kaldır
                     const notificationItem = button.closest('.list-group-item');
                     const badge = notificationItem.querySelector('.badge');
                     if (badge) badge.remove();
                     
-                    // Arka plan rengini güncelle
                     notificationItem.classList.remove('list-group-item-light');
                     
-                    // Bildirim sayısını güncelle
                     updateNotificationCount();
                 }
             })
@@ -243,7 +232,6 @@
             });
         }
         
-        // Tüm bildirimleri okundu olarak işaretleme fonksiyonu
         function markAllAsRead() {
             fetch('/dashboard/notifications/mark-all-read/', {
                 method: 'POST',
@@ -255,7 +243,6 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Sayfayı yenile
                     window.location.reload();
                 }
             })
@@ -264,7 +251,6 @@
             });
         }
         
-        // CSRF token alma fonksiyonu
         function getCookie(name) {
             let cookieValue = null;
             if (document.cookie && document.cookie !== '') {
@@ -280,7 +266,6 @@
             return cookieValue;
         }
         
-        // Bildirim sayısını güncelleme fonksiyonu
         function updateNotificationCount() {
             fetch('/dashboard/notifications/?is_read=false&format=json')
                 .then(response => response.json())

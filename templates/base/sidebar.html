@@ -1,6 +1,5 @@
 <div class="position-sticky pt-3">
     <ul class="nav flex-column">
-        <!-- Dashboard -->
         <li class="nav-item">
             <a class="nav-link {% if request.resolver_match.app_name == 'dashboard' and request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'dashboard:home' %}">
                 <i class="fas fa-tachometer-alt me-2"></i>
@@ -9,7 +8,6 @@
         </li>
         
         {% if user.role == 'admin' or user.role == 'manager' or user.role == 'receptionist' %}
-        <!-- Üyeler -->
         <li class="nav-item">
             <a class="nav-link {% if request.resolver_match.app_name == 'members' %}active{% endif %}" href="{% url 'members:home' %}">
                 <i class="fas fa-users me-2"></i>
@@ -19,7 +17,6 @@
         {% endif %}
         
         {% if user.role == 'admin' or user.role == 'manager' %}
-        <!-- Personel -->
         <li class="nav-item">
             <a class="nav-link {% if request.resolver_match.app_name == 'staff' %}active{% endif %}" href="{% url 'staff:home' %}">
                 <i class="fas fa-user-tie me-2"></i>
@@ -29,7 +26,6 @@
         {% endif %}
         
         {% if user.role == 'staff' %}
-        <!-- Personel Paneli -->
         <li class="nav-item">
             <a class="nav-link {% if request.resolver_match.app_name == 'staff' %}active{% endif %}" href="{% url 'staff:home' %}">
                 <i class="fas fa-id-card me-2"></i>
@@ -39,7 +35,6 @@
         {% endif %}
         
         {% if user.role == 'admin' or user.role == 'manager' or user.role == 'trainer' %}
-        <!-- Eğitmenler -->
         <li class="nav-item">
             <a class="nav-link {% if request.resolver_match.app_name == 'trainers' %}active{% endif %}" href="{% url 'trainers:home' %}">
                 <i class="fas fa-user-graduate me-2"></i>
@@ -48,7 +43,6 @@
         </li>
         {% endif %}
         
-        <!-- Dersler -->
         <li class="nav-item">
             <a class="nav-link {% if request.resolver_match.app_name == 'classes' %}active{% endif %}" href="{% url 'classes:home' %}">
                 <i class="fas fa-calendar-alt me-2"></i>
@@ -57,7 +51,6 @@
         </li>
         
         {% if user.role == 'admin' or user.role == 'manager' or user.role == 'receptionist' %}
-        <!-- Finans -->
         <li class="nav-item">
             <a class="nav-link {% if request.resolver_match.app_name == 'finance' %}active{% endif %}" href="{% url 'finance:home' %}">
                 <i class="fas fa-money-bill-wave me-2"></i>
@@ -67,7 +60,6 @@
         {% endif %}
         
         {% if user.role == 'admin' or user.role == 'manager' %}
-        <!-- Envanter -->
         <li class="nav-item">
             <a class="nav-link {% if request.resolver_match.app_name == 'inventory' %}active{% endif %}" href="{% url 'inventory:home' %}">
                 <i class="fas fa-boxes me-2"></i>
@@ -77,7 +69,6 @@
         {% endif %}
         
         {% if user.role == 'admin' or user.role == 'manager' or user.role == 'receptionist' %}
-        <!-- Rezervasyonlar -->
         <li class="nav-item">
             <a class="nav-link {% if request.resolver_match.app_name == 'reservations' %}active{% endif %}" href="{% url 'reservations:home' %}">
                 <i class="fas fa-bookmark me-2"></i>
@@ -92,7 +83,6 @@
         <span>{% trans "Yönetim" %}</span>
     </h6>
     <ul class="nav flex-column mb-2">
-        <!-- Raporlar -->
         <li class="nav-item">
             <a class="nav-link {% if request.resolver_match.app_name == 'dashboard' and request.resolver_match.url_name == 'report_list' %}active{% endif %}" href="{% url 'dashboard:report_list' %}">
                 <i class="fas fa-chart-bar me-2"></i>
@@ -100,7 +90,6 @@
             </a>
         </li>
         
-        <!-- Duyurular -->
         <li class="nav-item">
             <a class="nav-link {% if request.resolver_match.app_name == 'dashboard' and request.resolver_match.url_name == 'announcement_list' %}active{% endif %}" href="{% url 'dashboard:announcement_list' %}">
                 <i class="fas fa-bullhorn me-2"></i>
@@ -108,7 +97,6 @@
             </a>
         </li>
         
-        <!-- Görevler -->
         <li class="nav-item">
             <a class="nav-link {% if request.resolver_match.app_name == 'dashboard' and request.resolver_match.url_name == 'task_list' %}active{% endif %}" href="{% url 'dashboard:task_list' %}">
                 <i class="fas fa-tasks me-2"></i>
@@ -116,7 +104,6 @@
             </a>
         </li>
         
-        <!-- Admin Paneli -->
         {% if user.is_staff %}
         <li class="nav-item">
             <a class="nav-link" href="{% url 'admin:index' %}" target="_blank">

@@ -23,7 +23,6 @@
         </div>
     </div>
     
-    <!-- Filtreler -->
     <div class="card mb-4">
         <div class="card-body">
             <form method="get" class="row g-3">
@@ -55,7 +54,6 @@
         </div>
     </div>
     
-    <!-- Sekmeler -->
     <ul class="nav nav-tabs mb-4" id="taskTabs" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="assigned-tab" data-bs-toggle="tab" data-bs-target="#assigned" type="button" role="tab" aria-controls="assigned" aria-selected="true">
@@ -72,7 +70,6 @@
     </ul>
     
     <div class="tab-content" id="taskTabsContent">
-        <!-- Bana Atanan Görevler -->
         <div class="tab-pane fade show active" id="assigned" role="tabpanel" aria-labelledby="assigned-tab">
             <div class="card">
                 <div class="card-body p-0">
@@ -139,7 +136,6 @@
                     </div>
                 </div>
                 
-                <!-- Sayfalama -->
                 {% if assigned_page_obj.has_other_pages %}
                 <div class="card-footer">
                     <nav aria-label="Page navigation">
@@ -184,7 +180,6 @@
             </div>
         </div>
         
-        <!-- Oluşturduğum Görevler -->
         <div class="tab-pane fade" id="created" role="tabpanel" aria-labelledby="created-tab">
             <div class="card">
                 <div class="card-body p-0">
@@ -248,7 +243,6 @@
                     </div>
                 </div>
                 
-                <!-- Sayfalama -->
                 {% if created_page_obj.has_other_pages %}
                 <div class="card-footer">
                     <nav aria-label="Page navigation">

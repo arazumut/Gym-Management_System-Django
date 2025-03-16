@@ -24,7 +24,6 @@
         </div>
     </div>
     
-    <!-- Duyurular -->
     {% if announcements %}
     <div class="card mb-4">
         <div class="card-header bg-primary text-white">
@@ -52,7 +51,6 @@
     </div>
     {% endif %}
     
-    <!-- Widgetlar -->
     <div class="row" id="widgets-container">
         {% if user_widgets %}
             {% for user_widget in user_widgets %}
@@ -74,7 +72,6 @@
                         </div>
                         <div class="card-body">
                             <div class="widget-content" id="widget-{{ user_widget.widget.pk }}">
-                                <!-- Widget içeriği JavaScript ile yüklenecek -->
                                 <div class="text-center py-5">
                                     <div class="spinner-border text-primary" role="status">
                                         <span class="visually-hidden">{% trans "Yükleniyor..." %}</span>
@@ -95,7 +92,6 @@
     </div>
     
     <div class="row">
-        <!-- Bildirimler -->
         <div class="col-md-6 mb-4">
             <div class="card h-100 shadow-sm">
                 <div class="card-header bg-info text-white">
@@ -130,7 +126,6 @@
             </div>
         </div>
         
-        <!-- Görevler -->
         <div class="col-md-6 mb-4">
             <div class="card h-100 shadow-sm">
                 <div class="card-header bg-warning text-dark">
@@ -178,17 +173,14 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Widget içeriklerini yükle
         {% for user_widget in user_widgets %}
         loadWidgetContent({{ user_widget.widget.pk }}, '{{ user_widget.widget.widget_type }}');
         {% endfor %}
         
-        // Bildirim sayısını güncelle
         updateNotificationCount();
     });
     
     function loadWidgetContent(widgetId, widgetType) {
-        // AJAX ile widget içeriğini yükle
         fetch(`/dashboard/widgets/${widgetId}/`)
             .then(response => response.json())
             .then(data => {
@@ -269,7 +261,6 @@
                     badge.style.display = 'none';
                 }
                 
-                // Bildirim dropdown'ını güncelle
                 const container = document.getElementById('notifications-container');
                 if (data.results && data.results.length > 0) {
                     let html = '';

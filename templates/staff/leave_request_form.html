@@ -83,7 +83,7 @@
         </div>
         
         <div class="col-md-4">
-            <!-- İzin Bilgileri -->
+        
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-light">
                     <h5 class="card-title mb-0">{% trans "İzin Bilgileri" %}</h5>
@@ -105,7 +105,6 @@
                 </div>
             </div>
             
-            <!-- İzin Türleri -->
             <div class="card shadow-sm">
                 <div class="card-header bg-light">
                     <h5 class="card-title mb-0">{% trans "İzin Türleri" %}</h5>
@@ -145,38 +144,30 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Tarih seçicileri için varsayılan değerler
         var startDateInput = document.getElementById('id_start_date');
         var endDateInput = document.getElementById('id_end_date');
         var daysInput = document.getElementById('id_days');
         
-        // Tarih değişikliklerini izle
         startDateInput.addEventListener('change', calculateDays);
         endDateInput.addEventListener('change', calculateDays);
         
-        // Gün sayısını hesapla
         function calculateDays() {
             if (startDateInput.value && endDateInput.value) {
                 var startDate = new Date(startDateInput.value);
                 var endDate = new Date(endDateInput.value);
                 
-                // Tarih farkını hesapla (milisaniye cinsinden)
                 var timeDiff = endDate.getTime() - startDate.getTime();
                 
-                // Gün sayısını hesapla (milisaniyeyi güne çevir ve 1 ekle - başlangıç ve bitiş günleri dahil)
                 var dayDiff = Math.floor(timeDiff / (1000 * 3600 * 24)) + 1;
                 
-                // Negatif değer kontrolü
                 if (dayDiff < 1) {
                     dayDiff = 0;
                 }
                 
-                // Gün sayısını güncelle
                 daysInput.value = dayDiff;
             }
         }
         
-        // Sayfa yüklendiğinde gün sayısını hesapla
         calculateDays();
     });
 </script>

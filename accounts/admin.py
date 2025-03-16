@@ -24,4 +24,6 @@ class UserAdmin(BaseUserAdmin):
         }),
     )
 
+    readonly_fields = ['last_login', 'date_joined']
+
 admin.site.register(User, UserAdmin)

@@ -152,7 +152,7 @@
         var endDateInput = document.getElementById('id_end_date');
         if (endDateInput && !endDateInput.value) {
             var future = new Date();
-            future.setDate(future.getDate() + 30); // Varsayılan olarak 30 gün sonra
+            future.setDate(future.getDate() + 30);
             
             var year = future.getFullYear();
             var month = String(future.getMonth() + 1).padStart(2, '0');

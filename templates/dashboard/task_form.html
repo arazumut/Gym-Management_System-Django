@@ -139,11 +139,10 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Tarih seçici için varsayılan değer
         var dueDateInput = document.getElementById('id_due_date');
         if (dueDateInput && !dueDateInput.value) {
             var now = new Date();
-            now.setDate(now.getDate() + 7); // Varsayılan olarak 1 hafta sonra
+            now.setDate(now.getDate() + 7);
             
             var year = now.getFullYear();
             var month = String(now.getMonth() + 1).padStart(2, '0');
